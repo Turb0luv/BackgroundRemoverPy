@@ -10,12 +10,13 @@ session = new_session()
 
 #############################################CONFIG###############################################################
 
-threads = 5  # Кол-во потоков (АККУРАТНО)
-doc = r"D:\Projects\Python\BackgroundRemover\To-Do\Стандарт\Стандарт.csv"  # Путь или название .csv документа
-save_path = r"D:\Projects\Python\BackgroundRemover\To-Do\Стандарт"  # Папка, куда сохраняем обработанные изо
+threads = 5  # Кол-во потоков (АККУРАТНО!!!) (Протестировано 2 ядра/4 потока 2,3ГГц(100%), 8GB RAM(70-90%))
+doc = r"Example\examplecsv.csv"  # Путь или название .csv документа
+save_path = r"Example"  # Папка, куда сохраняем обработанные изо
 err = False  # Ставим в True если обрабатываем ошибочный файл(который создал сам скрипт) НЕДОРАБОТАНО!!!
 
-
+# Если хотим работать в однопотоке, комментим tasks.append и threader в мэйне, раскомменчиваем remove_background_multi
+# В этом случае в консоль будут выводиться только названия обработанных файлов и ошибки
 ##################################################################################################################
 
 
@@ -41,7 +42,7 @@ def remove_background_multi(image_urls, output_path, name):
                         image = remove(image)
                         image.save(f'{output_filename}', 'WEBP', optimize=True)
                         print(f"{name}_{counter}")
-                        counter +=1
+                        counter += 1
                     except:
                         print(f'ОШИБКА!!! PIC:{name}_{counter}')
                         with open('errors.csv', "a", newline='') as f:
@@ -59,14 +60,15 @@ def main():
         scv = doc
     with open(scv, "r") as csvfile:
         reader = csv.reader(csvfile, delimiter=",")
-        #next(reader)  # Кидаем в коммент в случае отсутствия строки описания
+        # next(reader)  # Кидаем в коммент в случае отсутствия строки описания
         tasks = []
         for row in reader:
             if row[0] != '':
                 name = row[0]
                 image_urls = row[1:]
-                tasks.append((image_urls, save_path, name))
-    threader(tasks)
+                tasks.append((image_urls, save_path, name))  # Запуск в многопотоке(коммент, если работаем в однопотоке)
+                # remove_background_multi(image_urls, save_path, name) # Запуск в однопотоке
+    threader(tasks)  # Кидаем в коммент если работаем в однопотоке
 
 
 def threader(tasks):
