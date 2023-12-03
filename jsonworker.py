@@ -8,8 +8,8 @@ check_path = r"Фулл"  # Папка с файлами(изо)
 sample = r"https://xn--80acmfijjefoglo2a.xn--90ais/assets/"  # Сэмпл ссылка
 dot = r'.webp'  # Расширение файла
 ##################################################################################
-json_file = r"products-1700949482.json"  # Исходный файл
-exit_json = r'products-ready.json'  # Готовый файл/Исходный для создания незаконченными изо csv
+json_file = r"allProducts.json"  # Исходный файл
+exit_json = r'allProducts-ready.json'  # Готовый файл/Исходный для создания незаконченными изо csv
 
 color_file = r"colors.json"  # Файл с цветами
 exit_csv = r'unfilled.csv'  # Готовый файл с незаконченными изо csv
@@ -66,15 +66,15 @@ def make_csv():
     for i in range(len(data)):
         if not data[i]['imgUrls']:
             idx = data[i]['id']
-            brand = data[i]['brand']
+            brand = data[i]['brand'] if 'brand' in data[i] else 'Бренд не указан'
             name = data[i]['name']
-            description = data[i]['description']
+            description = data[i]['description'] if 'description' in data[i] else ''
             color = colors.get(f'{i}')
             lst.append(f'{idx},"{brand}","{name}","{description}",{color}')
     with open(exit_csv, 'x', encoding="utf-8") as f:
         for i in lst:
             f.write(f'{str(i)}\n')
-    print('CSV ооздан')
+    print('CSV создан')
 
 
 def main():
