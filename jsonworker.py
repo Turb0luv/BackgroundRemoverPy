@@ -4,12 +4,12 @@ import re
 
 ################################CONFIG##########################################
 # Создание ссылок на файлы
-check_path = r"Фулл"  # Папка с файлами(изо)
+check_path = r"ToDo"  # Папка с файлами(изо)
 sample = r"https://xn--80acmfijjefoglo2a.xn--90ais/assets/"  # Сэмпл ссылка
 dot = r'.webp'  # Расширение файла
 ##################################################################################
-json_file = r"allProducts.json"  # Исходный файл
-exit_json = r'allProducts-ready.json'  # Готовый файл/Исходный для создания незаконченными изо csv
+json_file = r"final2.json"  # Исходный файл
+exit_json = r'final2-ready.json'  # Готовый файл/Исходный для создания незаконченными изо csv
 
 color_file = r"colors.json"  # Файл с цветами
 exit_csv = r'unfilled.csv'  # Готовый файл с незаконченными изо csv
@@ -46,7 +46,7 @@ def make_json():
     for fid, urls in fold.items():
         for i in range(len(data)):
             if data[i]['id'] == int(fid):
-                # print(f'{fid}')
+                print(f'{fid}')
                 data[i]['imgUrls'] = urls
     with open(exit_json, 'x', encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False)
@@ -56,12 +56,12 @@ def make_json():
 def make_csv():
     with open(exit_json, 'r', encoding="utf-8") as f:
         data = json.load(f)
-    with open(color_file, 'r', encoding="utf-8") as f:
-        clrs = json.load(f)
-    colors = {}
-    for i in clrs['data']:
-        cl = {i: clrs["data"][i]["name"]}
-        colors.update(cl)
+    # with open(color_file, 'r', encoding="utf-8") as f:  #Работа с цветами
+    #     clrs = json.load(f)
+    # colors = {}
+    # for i in clrs['data']:
+    #     cl = {i: clrs["data"][i]["name"]}
+    #     colors.update(cl)
     lst = []
     for i in range(len(data)):
         if not data[i]['imgUrls']:
@@ -69,8 +69,8 @@ def make_csv():
             brand = data[i]['brand'] if 'brand' in data[i] else 'Бренд не указан'
             name = data[i]['name']
             description = data[i]['description'] if 'description' in data[i] else ''
-            color = colors.get(f'{i}')
-            lst.append(f'{idx},"{brand}","{name}","{description}",{color}')
+            # color = colors.get(f'{i}') #Работа с цветами
+            lst.append(f'{idx},"{brand}","{name}",{description}') #Работа с цветами(добавить после description перем. colors)
     with open(exit_csv, 'x', encoding="utf-8") as f:
         for i in lst:
             f.write(f'{str(i)}\n')
